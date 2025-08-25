@@ -3,6 +3,7 @@ package com.luis.todoapp.user.controller;
 import com.luis.todoapp.user.dto.CreateUserRequest;
 import com.luis.todoapp.user.model.User;
 import com.luis.todoapp.user.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,8 +27,15 @@ public class UserController {
         return "register";
     }
 
+
     @PostMapping("/auth/register/submit")
-    public String processRegisterForm(@ModelAttribute("user") CreateUserRequest request, BindingResult bindingResult) {
+    public String processRegisterForm(
+            @Valid // Valid annotation is necessary to activate the validation features in Spring Boot
+            @ModelAttribute("user") CreateUserRequest request, BindingResult bindingResult) {
+        if (!request.getPassword().equals(request.getVerifyPassword())) {
+            bindingResult.rejectValue("password", "error.password",  "Passwords do not match");
+        }
+
         if (bindingResult.hasErrors()) {
             return "register";
         }

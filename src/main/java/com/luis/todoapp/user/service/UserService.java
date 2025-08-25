@@ -21,6 +21,10 @@ public class UserService {
     // Takes the DTO which will be the command object of the register form
     public User registerUser(CreateUserRequest request) {
 
+        if (!request.getPassword().equals(request.getVerifyPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
         return userRepository.save(
                 User.builder()
                         .username(request.getUsername())
