@@ -1,13 +1,12 @@
 package com.luis.todoapp.shared.security;
 
 import com.luis.todoapp.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+// Service that Spring Security will use to authenticate Users.
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
