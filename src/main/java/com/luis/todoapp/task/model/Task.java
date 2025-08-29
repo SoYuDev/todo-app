@@ -20,28 +20,22 @@ import java.util.Set;
 @ToString
 @Entity
 public class Task {
+
     @Id
     @GeneratedValue
     private Long id;
 
     private String title;
 
-    @Lob // The String will be stored as a CLOB (Character Large Object) used for large fields like descriptions.
+    @Lob
     private String description;
 
     private boolean completed;
 
-    @Builder.Default // Sets 'created' to the current time if not provided in the Builder.
-    private LocalDateTime created = LocalDateTime.now();
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne // Indicates many-to-one relationship between two entities.
-    // @JoinColumn creates a column (by default named category_id) that will store the ID of the category
-    // foreignKey = @ForeignKey(name = "fk_task_category") names the foreign key constraint to fk_task_category
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_task_category"))
-    private Category category;
-
-    @ManyToMany(fetch = FetchType.EAGER) // When we load a Task, also loads its tags immediately, alternative is LAZY which loads tags only when accessed.
-    // Many-to-many ALWAYS needs a join table, this table connects Task and Tag.
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "task_tag",
             joinColumns = @JoinColumn(name = "task_id"),
             foreignKey = @ForeignKey(name = "fk_task_tag_task"),
@@ -49,12 +43,17 @@ public class Task {
             inverseForeignKey = @ForeignKey(name = "fk_task_tag_tag")
     )
     @Builder.Default
-    @Setter(AccessLevel.NONE) // Eliminates the setter of this field or attribute.
-    private Set<Tag> tags = new HashSet<>(); // We use a set instead of a list to avoid duplicates.
+    @Setter(AccessLevel.NONE)
+    private Set<Tag> tags = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_task_user"))
     private User author;
+
+
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_task_category"))
+    private Category category;
 
     @Override
     public final boolean equals(Object o) {

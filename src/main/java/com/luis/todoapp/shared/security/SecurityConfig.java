@@ -53,33 +53,32 @@ public class SecurityConfig {
 //        return http.build();
 //    }
 
-    @Bean
+        @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 
-        http
-                .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/producto/**").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .requestCache(cache -> {
-                    HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-                    requestCache.setMatchingRequestParameterName(null);
-                    cache.requestCache(requestCache);
-                })
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/producto/list", true)
-                        .permitAll()
-                )
-                /*.logout(logout -> logout
-                                .logoutUrl("/logout")
-                                .permitAll()
-                );*/
-                .logout(Customizer.withDefaults());
+
+        http.authorizeHttpRequests(requests ->
+                requests.requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/login","/logout","/auth/register", "/auth/register/submit", "/h2-console/**", "/img/**", "/css/**").permitAll()
+                                .anyRequest().authenticated());
+
+        http.formLogin(login -> {
+           login.loginPage("/login")
+                   .defaultSuccessUrl("/")
+                   .permitAll();
+        });
+
+        http.requestCache(cache -> {
+            HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+            requestCache.setMatchingRequestParameterName(null);
+            cache.requestCache(requestCache);
+        });
+
+        http.logout(Customizer.withDefaults());
 
         http.csrf((csrf) -> {
-            csrf.ignoringRequestMatchers("/h2/**");
+            csrf.ignoringRequestMatchers("/h2-console/**");
         });
         http.headers((headers) ->
                 headers.frameOptions((opts) -> opts.disable()));
