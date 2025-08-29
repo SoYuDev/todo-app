@@ -21,6 +21,8 @@ public class Category {
     @GeneratedValue
     private Long id;
 
+    private String title;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
